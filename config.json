@@ -1,0 +1,17 @@
+{
+    "site_patterns": {
+        "https://www.fi.is/en/mountain-huts/hut-availability": [
+            "for accommodation along the Laugavegur trail in 2025",
+            "Bookings for 2026 have not opened"
+        ],
+        "https://www.fi.is/en/mountain-huts/hut-availability/hut-to-hut-availability": [
+            "Bookings for 2026 are not open yet"
+        ],
+        "https://www.google.com": [
+            "This specific magic phrase will not be found"
+        ]
+    },
+    "email_recipients": [
+        "gevakip@gmail.com"
+    ]
+}
