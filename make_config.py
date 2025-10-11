@@ -7,7 +7,6 @@ MY_RECIPIENT_LIST = ['gevakip@gmail.com']
 # This is the dictionary you provided
 SITE_PATTERNS = {
     'https://www.fi.is/en/mountain-huts/hut-availability': [
-        'for accommodation along the Laugavegur trail in 2025', 
         'Bookings for 2026 have not opened'
     ],
     'https://www.fi.is/en/mountain-huts/hut-availability/hut-to-hut-availability': [
@@ -15,9 +14,9 @@ SITE_PATTERNS = {
     ],
     # You can add more sites here
     # Example of a site that will likely fail the check (for testing)
-    'https://www.google.com': [
-        'This specific magic phrase will not be found'
-    ]
+    # 'https://www.google.com': [
+    #     'This specific magic phrase will not be found'
+    # ]
 }
 
 # Combine into the config structure
