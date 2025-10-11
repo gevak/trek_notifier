@@ -18,7 +18,7 @@ def send_notification_email(subject, body, recipients):
     """
     try:
       sender = 'emailnotifier17@gmail.com'
-      password = os.getenv('GMAIL_APP_PASSWORD')
+      password = os.getenv('GMAIL_APP_PASSWORD') or ''
       msg = MIMEText(body)
       msg['Subject'] = subject
       msg['From'] = sender
@@ -27,11 +27,9 @@ def send_notification_email(subject, body, recipients):
           smtp_server.login(sender, password)
           smtp_server.sendmail(sender, recipients, msg.as_string())
       print("Message sent!")
-        
-    except HttpError as error:
-        print(f"An error occurred while sending email: {error}")
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print(f"An unexpected error occurred while sending email: {e}")
+        raise e
 
 
 def check_websites_for_changes(site_patterns, email_recipients):
@@ -88,21 +86,23 @@ def check_websites_for_changes(site_patterns, email_recipients):
                   break
 
             else:
-                print(f"  -> Status: OK")
+                print(f"  -> Status: No diff")
 
         except requests.exceptions.HTTPError as http_err:
             print(f"  -> !!! ERROR: HTTP error occurred for {url}: {http_err}")
             subject = f"Website Check FAILED: {url}"
             body = f"Failed to check {url} due to an HTTP error: {http_err}"
-            if email_recipients and gmail_service:
-                send_notification_email(gmail_service, subject, body, email_recipients)
+            if email_recipients:
+                send_notification_email(subject, body, email_recipients)
+            raise http_err
                 
         except requests.exceptions.RequestException as req_err:
             print(f"  -> !!! ERROR: Failed to fetch {url}: {req_err}")
             subject = f"Website Check FAILED: {url}"
             body = f"Failed to check {url} due to a request error: {req_err}"
-            if email_recipients and gmail_service:
-                send_notification_email(gmail_service, subject, body, email_recipients)
+            if email_recipients:
+                send_notification_email(subject, body, email_recipients)
+            raise req_err
 
     if not changed_sites:
         print("\nCheck complete. All websites contain all expected patterns.")
@@ -122,22 +122,24 @@ def main():
         RECIPIENT_EMAILS = config.get('email_recipients', [])
         
         if not PATTERNS_TO_CHECK:
-            print("Error: 'site_patterns' not found or empty in config.json")
+            raise ValueError("Error: 'site_patterns' not found or empty in config.json")
         if not RECIPIENT_EMAILS:
-            print("Warning: 'email_recipients' not found or empty in config.json. No emails will be sent.")
+            raise ValueError("'email_recipients' not found or empty in config.json. No emails will be sent.")
             
         # --- Run the Check ---
         if PATTERNS_TO_CHECK:
             print("\nStarting website check...")
             check_websites_for_changes(PATTERNS_TO_CHECK, RECIPIENT_EMAILS)
         else:
-            print("Could not run check because no sites are configured.")
+            raise ValueError("Could not run check because no sites are configured.")
 
     except FileNotFoundError:
         print(f"Error: Configuration file '{config_filename}' not found.")
-        print("Please run the previous cell to create it.")
+        print("Please run make_config.py to create it.")
+        raise
     except json.JSONDecodeError:
         print(f"Error: Could not parse '{config_filename}'. Please check its format.")
+        raise
 
 
 if __name__ == '__main__':
