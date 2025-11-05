@@ -2,9 +2,6 @@
     "site_patterns": {
         "https://www.fi.is/en/mountain-huts/hut-availability": [
             "Bookings for 2026 have not opened"
-        ],
-        "https://www.fi.is/en/mountain-huts/hut-availability/hut-to-hut-availability": [
-            "Bookings for 2026 are not open yet"
         ]
     },
     "email_recipients": [
